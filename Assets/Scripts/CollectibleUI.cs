@@ -1,11 +1,9 @@
 using UnityEngine;
 using TMPro;
 
-/// <summary>
 /// Simple UI bridge that listens to CollectibleManager and
 /// updates on-screen text for coins whenever the
 /// player picks up a collectible.
-/// </summary>
 public class CollectibleUI : MonoBehaviour
 {
     [Header("UI References")]
