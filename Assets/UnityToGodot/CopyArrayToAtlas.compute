@@ -1,0 +1,50 @@
+#pragma kernel CSMain
+
+Texture2DArray<float4> _Source;
+RWTexture2D<float4> _Target;
+
+SamplerState linearClampSampler
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = Clamp;
+    AddressV = Clamp;
+};
+
+int _SlicesX;
+int _SlicesY;
+int _SliceWidth;
+int _SliceHeight;
+
+[numthreads(8, 8, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    uint x = id.x;
+    uint y = id.y;
+    uint totalWidth = _SlicesX * _SliceWidth;
+    uint totalHeight = _SlicesY * _SliceHeight;
+
+    if (x >= totalWidth || y >= totalHeight)
+        return;
+
+    // Compute which slice this pixel belongs to
+    uint sliceX = x / _SliceWidth;
+    uint sliceY = y / _SliceHeight;
+    //uint sliceIndex = sliceY * _SlicesX + sliceX;
+    uint sliceIndex = ((_SlicesY - 1) - sliceY) * _SlicesX + sliceX;
+
+    uint width, height, depth;
+    _Source.GetDimensions(width, height, depth);
+    if (sliceIndex >= depth)
+    {
+        _Target[int2(x, y)] = float4(0, 0, 0, 0);
+        return;
+    }
+    
+    uint localX = x % _SliceWidth;
+    uint localY = y % _SliceHeight;
+
+    float2 uv = (float2(localX, localY) + 0.5) / float2(_SliceWidth, _SliceHeight);
+    float4 color = _Source.SampleLevel(linearClampSampler, float3(uv, sliceIndex), 0);
+
+    _Target[int2(x, y)] = color;
+}

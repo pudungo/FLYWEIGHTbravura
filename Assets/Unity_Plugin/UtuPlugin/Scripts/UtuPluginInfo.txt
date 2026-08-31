@@ -1,0 +1,176 @@
+IMPORTANT: Please backup your project before using this tool. 
+    I've never lost any data using this tool, but I don't want to be responsible for any data loss during the process.
+    (It is also a good habit to backup your project from time to time or to simply use a source control.)
+
+
+Compatible Unity Versions (Windows, Mac & Linux): 2018 to 2023, 6.0 to 6.3
+Compatible Unreal Versions (Pre-compiled) 
+- Windows: 4.25, 4.26, 4.27, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7
+Compatible Unreal Versions (Not pre-compiled, you have to compile them yourself):
+- Linux: 4.25, 4.26, 4.27, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7
+- Mac: 4.25, 4.26, 4.27, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7 (For UE4 use xCode13. For UE5 use xCode14)
+
+
+Utu Plugin Demo & Tutorial:
+- https://youtu.be/34qx5Ac8cZo?si=ne29q3cGtNJ6WWsu
+
+My Other Links:
+- [EN] YouTube - Unreal Engine Tutorials: https://www.youtube.com/AlexQuevillonEn?sub_confirmation=1
+- [FR] YouTube - Tutoriels Unreal Engine: https://www.youtube.com/AlexQuevillonFr?sub_confirmation=1
+- Patreon: https://www.patreon.com/c/alexquevillon
+
+Need Help?
+- Email: Alex.Quevillon.Help@gmail.com
+- Discord: https://discord.gg/4kGcyYdsaT
+
+
+Supported Assets:
+
+Scene:
+    What it does:
+        - Creates a World asset
+        - Adds a SkyLight to simulate Unity's default lighting
+        - Adds all the actors (Including display name, transform, visibility and tag)
+        - Recreates the scene's hierarchy
+        - Supports instance edited materials on static mesh actors
+    Limitations:
+        - If your scenes contain non-uniform scaling on any parent of a rotated mesh, the result will not be as expected in Unreal because of the way the meshes are transformed.
+            Example of the difference between the two engines: https://youtu.be/kdM9UWolEj4
+        - Bad hierarchy examples:
+            Scene root -> Non-uniformly scaled object -> Rotated mesh
+            Scene root -> Non-uniformly scaled object -> Uniformly scaled object -> Rotated mesh
+            Scene root -> Non-uniformly scaled object -> Rotated object -> Not rotated mesh
+        - Good hierarchy examples:
+            Scene root -> Uniformly scaled object -> Rotated mesh
+            Scene root -> Non-uniformly scaled object -> Not rotated mesh
+            Scene root -> Uniformly scaled object -> Not rotated mesh
+
+Prefab:
+    What it does:
+        - Creates a Blueprint Actor asset
+        - Adds all the components (Including display name, transform, visibility and tag)
+        - Recreates the prefab's hierarchy
+        - Supports instance edited materials on static mesh components
+        - Supports nested prefabs (child actor components)
+    Limitations:
+        - If your prefabs contain non-uniform scaling on any parent of a rotated mesh, the result will not be as expected in Unreal because of the way the meshes are transformed.
+            Example of the difference between the two engines: https://youtu.be/kdM9UWolEj4
+        - Bad hierarchy examples:
+            Prefab root -> Non-uniformly scaled object -> Rotated mesh
+            Prefab root -> Non-uniformly scaled object -> Uniformly scaled object -> Rotated mesh
+            Prefab root -> Non-uniformly scaled object -> Rotated object -> Not rotated mesh
+        - Good hierarchy examples:
+            Prefab root -> Uniformly scaled object -> Rotated mesh
+            Prefab root -> Non-uniformly scaled object -> Not rotated mesh
+            Prefab root -> Uniformly scaled object -> Not rotated mesh
+
+Static Mesh:
+    What it does:
+        - Creates a Static Mesh asset
+        - Assigns the materials to the mesh
+        - Supports .fbx or .obj files with more than one mesh
+        - Uses FBX Exporter to generate .fbx files for meshes that are from different sources
+    Limitations:
+        - I don't have much control over FBX Exporter so the exports of .asset files aren't the best. (location, rotation & scale issues)
+        - The materials ID are sometime swapped during import
+
+Skeletal Mesh:
+    What it does:
+        - Creates a Skeletal Mesh asset
+        - Assigns the materials to the mesh
+        - Uses FBX Exporter to generate .fbx files for meshes that are from different sources
+    Limitations: 
+        - Rig may not be supported by Unreal. (Not a limitation of Utu, but of Unreal compared to Unity)
+        - The materials ID are sometime swapped during import
+
+Animation:
+    What it does:
+        - Imports Animation assets
+        - Link them to the desired Skeleton
+        - Apply animation overrides on Skeletal Meshes in the Level (or Blueprint)
+        - Uses FBX Exporter to generate .fbx files for meshes that are from different sources
+    Limitations: 
+        - Can only link the Animation to the proper Skeletal Mesh if they're linked through an Animator component in a Scene (or Prefab)
+        - Only supports 1 animation per .fbx file
+        - Doesn't create Animation Blueprints
+        - Animation import transform isn't always good. You can customize it using the "Import Settings" tab in the Utu Plugin window.
+
+Texture:
+    What it does:
+        - Creates a Texture2D asset using the texture file
+    Limitations: 
+        - .tif & .tiff files are not supported by Unreal. The plugin will export them as .png (Normal maps may not convert properly)
+
+Material:
+    What it does:
+        - Creates Material and Material Instance asset
+        - Sets all the parameters and textures into the material
+    Supported shader types:
+        - Standard
+        - Standard (Specular setup)
+        - Unlit/Color
+        - Unlit/Texture
+        - Unlit/Transparent
+        - Unlit/Transparent Cutout
+        - Mobile/Diffuse
+        - Mobile/Unlit (Supports Lightmap)
+        - Mobile/Bumped Diffuse
+        - Mobile/Bumped Specular
+        - Legacy Shaders/Diffuse
+        - Legacy Shaders/Bumped Diffuse 
+        - Legacy Shaders/Bumped Specular 
+        - HDRP/Lit
+        - HDRP/Unlit
+        - Universal Render Pipeline/Baked Lit 
+        - Universal Render Pipeline/Complex Lit 
+        - Universal Render Pipeline/Lit 
+        - Universal Render Pipeline/Simple Lit 
+        - Universal Render Pipeline/Unlit
+        - ShaderGraphs_ArnoldStandardSurface
+        - ShaderGraphs_ArnoldStandardSurfaceTransparent
+        - ShaderGraphs_PhysicalMaterial3DsMax
+        - ShaderGraphs_PhysicalMaterial3DsMaxTransparent
+        - ShaderGraphs_VFXSpriteLit
+        - ShaderGraphs_VFXSpriteUnlit
+    Limitations: 
+        - Equivalence is not 100% perfect
+        - Custom shaders (and shaders not in this list) are not supported, but the tool will still import all the parameters in Unreal and create a basic material graph.
+
+Spotlight:
+    Supported parameters:
+        - Intensity
+        - Color
+        - Range
+        - Cast Shadows
+        - Spot Angle
+    Limitations: 
+        - Equivalence is not 100% perfect
+
+Pointlight:
+    Supported parameters:
+        - Intensity
+        - Color
+        - Range
+        - Cast Shadows
+    Limitations: 
+        - Equivalence is not 100% perfect
+
+Directionnal Light:
+    Supported parameters:
+        - Intensity
+        - Color
+        - Cast Shadows
+    Limitations: 
+        - Equivalence is not 100% perfect
+
+Camera:
+    Supported parameters:
+        - Clipping planes
+        - Aspect ratio
+        - Projection
+        - Field of view
+        - Focal length
+        - Sensor size
+
+
+

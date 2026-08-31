@@ -18,5 +18,5 @@ EditorBuildSettings:
     path: Assets/Scenes/TransitionScene.unity
     guid: 9e147c90a89f94642a4fb7cdc40ac4b1
   m_configObjects:
-    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 289c1b55c9541489481df5cc06664110, type: 3}
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: cccebbc7d3db0df4b9bee4578679053a, type: 3}
   m_UseUCBPForAssetBundles: 0

@@ -34,7 +34,7 @@ public class ThirdPersonController : MonoBehaviour
     [Header("Speed")]
     [SerializeField]
     private float lookSpeed = 10f;
-    private float movementSpeed = 3f;
+    [SerializeField] private float movementSpeed = 3f;
     [SerializeField] private float runningSpeedMultiplier = 1.5f;
     [SerializeField] private float backwardSpeedMultiplier = 0.5f;
 

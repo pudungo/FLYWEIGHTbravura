@@ -1,0 +1,11 @@
+
+ExportFolder : The place where the godot project will be generated and the exported assets will be placed
+ExportTerrain : this will export the unity terrain component by first converting it to a static mesh
+RescaleTerrainHeightmap : depending on your terrain complexity, the triangles of a terrain can get to millions. So if you want a much simpler terrain or want your export to finish in time, it's recommended to turn this on. If however you find that the terrain looks lowres or doesn't match with your assets due to resizing you should leave this off. Also if the terrain has too many triangles, when unity imports it as a static mesh, it may hang, or at least it doesn't finish in like 30 minutes.
+MaxTerranTriangles - it's only relevant when RescaleTerrainHeightmap is on. It limits the amount of triangles when resizing.
+ExportTerrainTrees - this will export the terrain component's tree instances
+ExportTerrainDetails - this will export the terrain component's grass instances
+ConvertSkinnedToStatic - this will convert skinned meshes to static meshes. This exists because the GLTF exporter does not have support for animations so if you export them as static meshes you may be able to manage them easier
+ExportVertexShaders - when a material contains a shadergraph it usually has a pixel shader but may also have a vertex shader. It's usually fine to leave this on but if for some reason the vertex animation doesnt work or you don't want a wind effect, you can turn this off.
+EmbedTexturesInGLB - if turned on and the mesh is using a standard material,all the material's textures wil be embedded into the GLB. If this is off, textures are placed outside the GLB and material textures exist only once. If you choose to turn this on take note that Godot import times can be extreme as every mesh can potentially have duplicate textures.
+Point/Spot/Directional Light Multipliers - these are exposed to help you easily convert all light intensities to Godot.If you find that the exported light intensities are too small or too high you should try changing these. Godot wants lumens in the 10 to 100K range even though in Unity they look fine in the 10-100 range. So if they look wrong in Godot, try to see what range looks right, get the ratio between that and the original and put that value for Spot/Point lights. Directional lights rarely need turning.
