@@ -9,13 +9,13 @@ public class Health : MonoBehaviour
     public bool IsDead => isDead;
 
     private ThirdPersonController controller;
-
-
+    private PlayerSound playerSound;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
         controller = GetComponent<ThirdPersonController>();
+        playerSound = GetComponent<PlayerSound>();
     }
     public float HealthPoints
     {
@@ -29,6 +29,8 @@ public class Health : MonoBehaviour
             if (_HealthPoints < oldHealth && !isDead)
             {
                 animator.SetTrigger("TakeDamage");
+                if (_HealthPoints > 0f)
+                    playerSound?.PlayTakeDamage();
 
                 // Lock now so Move() cannot re-apply velocity before the clip starts.
                 // InputLockBehaviour on the TakeDamage state unlocks when the clip ends.
@@ -58,6 +60,7 @@ public class Health : MonoBehaviour
         if (isDead) return; 
 
         isDead = true;
+        playerSound?.PlayDeath();
 
         animator.ResetTrigger("TakeDamage"); // stops takedamage anim when dead
         animator.SetLayerWeight(1, 0f);

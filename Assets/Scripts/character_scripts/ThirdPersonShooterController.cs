@@ -6,12 +6,10 @@ public class ThirdPersonShooterController : MonoBehaviour
 {
     [SerializeField] private CinemachineCamera aimVirtualCamera;
     [SerializeField] private CinemachineCamera reloadVirtualCamera;
+    public CinemachineCamera AimCamera => aimVirtualCamera;
 
-    [SerializeField] private LayerMask aimColliderLayerMask = new LayerMask();
     [SerializeField] private Transform debugTransform;
     private Animator animator;
-    [SerializeField] private Animator platformAnimator;
-
 
     private const string fireTriggerName = "Firing";
     private const string reloadStateName = "Reload";
@@ -29,12 +27,16 @@ public class ThirdPersonShooterController : MonoBehaviour
 
     private Health health;
     private ThirdPersonController controller;
+    private Recoil recoil;
+    private PlayerSound playerSound;
 
     private void Awake()
     {
         controller = GetComponent<ThirdPersonController>();
         animator = GetComponent<Animator>();
         health = GetComponent<Health>();
+        recoil = GetComponent<Recoil>();
+        playerSound = GetComponent<PlayerSound>();
         currentAmmo = clipSize;
     }
 
@@ -56,7 +58,8 @@ public class ThirdPersonShooterController : MonoBehaviour
         {
             isAiming = !isAiming; // toggle
             Aim(isAiming);
-
+            if (isAiming)
+                playerSound?.PlayAim();
         }
     }
 
@@ -73,6 +76,9 @@ public class ThirdPersonShooterController : MonoBehaviour
     {
         if (aimVirtualCamera != null)
             aimVirtualCamera.gameObject.SetActive(aiming);
+
+        if (!aiming && recoil != null)
+            recoil.ResetRecoil();
     }
 
     private void Reload(bool reloading)
@@ -87,13 +93,20 @@ public class ThirdPersonShooterController : MonoBehaviour
             return;
 
         if (currentAmmo <= 0)
+        {
+            TryReload(); // reloads after firing with no ammo
             return;
+        }
 
         if (Time.time < nextFireTime)
             return;
 
         nextFireTime = Time.time + 1f / Mathf.Max(0.01f, fireRate);
         currentAmmo--;
+        playerSound?.PlayFire();
+
+        if (recoil != null)
+            recoil.Fire();
 
         animator.SetTrigger(fireTriggerName);
 
@@ -105,11 +118,6 @@ public class ThirdPersonShooterController : MonoBehaviour
             if (enemyHealth != null && enemyHealth.CompareTag("Enemy"))
                 enemyHealth.TakeDamage(enemyDamagePerShot);
 
-            FreezablePlatform platform = hit.transform.GetComponent<FreezablePlatform>();
-            if (platform != null)
-            {
-                platform.ToggleFreeze();
-            }
         }
         else
         {
@@ -131,12 +139,13 @@ public class ThirdPersonShooterController : MonoBehaviour
 
     private void TryReload()
     {
-        if (isReloading || currentAmmo >= clipSize)
+        if (isReloading)
             return;
 
         isReloading = true;
         reloadStateEntered = false;
         reloadKeptAimLayer = isAiming;
+        playerSound?.PlayReload();
 
         // Reloading is a trigger: Any State would re-enter Reload (CanTransitionToSelf)
         // and InputLockBehaviour.OnStateExit would unlock movement mid-clip.

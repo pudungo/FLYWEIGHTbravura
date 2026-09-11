@@ -20,10 +20,12 @@ public class ThirdPersonController : MonoBehaviour
     private const float aimTurnSmoothTime = 0.08f;
 
     private Health health;
+    private Recoil recoil;
 
     [Header("Cinemachine")]
     [SerializeField]
     private Transform cameraTarget;
+    public Transform CameraTarget => cameraTarget;
 
     [SerializeField]
     private float topClamp = 70.0f;
@@ -53,8 +55,7 @@ public class ThirdPersonController : MonoBehaviour
     public bool IsAiming => isAiming; // with aim script
 
     private Vector2 look;
-    [SerializeField] private float minPitch = -30f;
-    [SerializeField] private float maxPitch = 60f;
+
 
     private Rigidbody body;
     private Animator animator;
@@ -115,6 +116,7 @@ public class ThirdPersonController : MonoBehaviour
         animator = GetComponent<Animator>();
         playerInput = GetComponent<PlayerInput>();
         health = GetComponent<Health>();
+        recoil = GetComponent<Recoil>();
     }
 
 
@@ -126,7 +128,11 @@ public class ThirdPersonController : MonoBehaviour
 
 
         if (health.IsDead)  // death input freeze guard
+        {
+            if (recoil != null)
+                recoil.ResetRecoil();
             return;
+        }
 
 
         if (isAiming)
@@ -138,6 +144,8 @@ public class ThirdPersonController : MonoBehaviour
         {
             // when exiting aiming returns rotation to movement
             yaw = transform.eulerAngles.y;
+            if (recoil != null)
+                recoil.ResetRecoil();
         }
 
     }

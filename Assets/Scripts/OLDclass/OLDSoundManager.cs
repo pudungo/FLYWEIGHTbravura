@@ -1,10 +1,10 @@
 using UnityEngine;
 using static Collectible;
 
-public class SoundManager : MonoBehaviour
+public class OLDSoundManager : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-public static SoundManager Instance { get; private set; }
+public static OLDSoundManager Instance { get; private set; }
 
 [Header("Pickup Sounds")]
     

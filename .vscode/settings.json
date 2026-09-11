@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Solvamp_v01.sln"
+    "dotnet.defaultSolution": "FLYWEIGHTbravura.sln"
 }
