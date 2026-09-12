@@ -98,14 +98,7 @@ ModelImporter:
           preInfinity: 3
           postInfinity: 3
           rotationOrder: 4
-      events:
-      - time: 1
-        functionName: OnQuickTurnEnd()
-        data: 
-        objectReferenceParameter: {fileID: 11500000, guid: 023741f652cadcd4c947b82ae7f353fa, type: 3}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
+      events: []
       transformMask: []
       maskType: 3
       maskSource: {fileID: 31900000, guid: d043e9de0028f2b42a0e24011bf27807, type: 2}

@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Cinemachine;
 using UnityEngine.InputSystem;
 
+[DefaultExecutionOrder(50)]
 public class ThirdPersonShooterController : MonoBehaviour
 {
     [SerializeField] private CinemachineCamera aimVirtualCamera;
@@ -9,6 +10,7 @@ public class ThirdPersonShooterController : MonoBehaviour
     public CinemachineCamera AimCamera => aimVirtualCamera;
 
     [SerializeField] private Transform debugTransform;
+    [SerializeField] Transform gunPivot;
     private Animator animator;
 
     private const string fireTriggerName = "Firing";
@@ -186,17 +188,10 @@ public class ThirdPersonShooterController : MonoBehaviour
     {
         hit = default;
 
-        Camera cam = Camera.main;
-        if (cam == null)
+        if (!TryGetAimRay(out Ray ray))
             return false;
 
-        Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
-        Ray ray = cam.ScreenPointToRay(screenCenterPoint);
-
-        // Always ignore the Player layer. The camera sits behind the character,
-        // so a ray from that origin hits july_maya9 before the aimed object.
-        int layerMask = Physics.DefaultRaycastLayers & ~(1 << gameObject.layer);
-
+        int layerMask = AimLayerMask();
         if (!Physics.Raycast(ray, out hit, range, layerMask))
             return false;
 
@@ -237,7 +232,10 @@ public class ThirdPersonShooterController : MonoBehaviour
         aimLayerWeight = Mathf.Lerp(aimLayerWeight, targetWeight, Time.deltaTime * 15f);
 
         animator.SetLayerWeight(1, aimLayerWeight);
+    }
 
+    private void LateUpdate()
+    {
         if (isAiming)
             UpdateAimTarget();
     }
@@ -285,7 +283,7 @@ public class ThirdPersonShooterController : MonoBehaviour
         if (!TryGetAimRay(out Ray ray))
             return;
 
-        int layerMask = Physics.DefaultRaycastLayers & ~(1 << gameObject.layer);
+        int layerMask = AimLayerMask();
         if (Physics.Raycast(ray, out RaycastHit hit, weaponRange, layerMask)
             && !hit.transform.IsChildOf(transform))
         {
@@ -298,15 +296,18 @@ public class ThirdPersonShooterController : MonoBehaviour
 
     private bool TryGetAimRay(out Ray ray)
     {
-        Camera cam = Camera.main;
-        if (cam == null)
+        if (gunPivot == null)
         {
             ray = default;
             return false;
         }
 
-        Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
-        ray = cam.ScreenPointToRay(screenCenterPoint);
+        ray = new Ray(gunPivot.position, gunPivot.forward);
         return true;
+    }
+
+    int AimLayerMask()
+    {
+        return Physics.DefaultRaycastLayers & ~(1 << gameObject.layer);
     }
 }

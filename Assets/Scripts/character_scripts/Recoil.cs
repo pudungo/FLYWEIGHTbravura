@@ -9,30 +9,23 @@ public class Recoil : MonoBehaviour
     [SerializeField] float snappiness = 25f;
     [SerializeField] float returnSpeed = 5f;
 
-    Transform recoilPivot;
+    [SerializeField] Transform recoilPivot;
     Vector3 current;
     Vector3 target;
 
     private void Awake()
     {
-        ThirdPersonController controller = GetComponent<ThirdPersonController>();
-        Transform followTarget = controller != null ? controller.CameraTarget : null;
-        if (followTarget == null)
+        if (recoilPivot == null)
             return;
-
-        recoilPivot = new GameObject("RecoilPivot").transform;
-        recoilPivot.SetParent(followTarget, false);
-        recoilPivot.localPosition = Vector3.zero;
-        recoilPivot.localRotation = Quaternion.identity;
 
         ThirdPersonShooterController shooter = GetComponent<ThirdPersonShooterController>();
         CinemachineCamera aimCamera = shooter != null ? shooter.AimCamera : null;
-        if (aimCamera != null)
-        {
-            var aimTarget = aimCamera.Target;
-            aimTarget.TrackingTarget = recoilPivot;
-            aimCamera.Target = aimTarget;
-        }
+        if (aimCamera == null)
+            return;
+
+        var aimTarget = aimCamera.Target;
+        aimTarget.TrackingTarget = recoilPivot;
+        aimCamera.Target = aimTarget;
     }
 
     private void LateUpdate()

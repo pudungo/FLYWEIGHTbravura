@@ -59,7 +59,7 @@ BlendTree:
   - serializedVersion: 2
     m_Motion: {fileID: 3094330708855449807, guid: 77673eecac9076048b4b09f89e0c3d02, type: 3}
     m_Threshold: 0.54545456
-    m_Position: {x: -0.8, y: 0.8}
+    m_Position: {x: -0.35, y: 0.35}
     m_TimeScale: 1
     m_CycleOffset: 0
     m_DirectBlendParameter: Speed
@@ -75,7 +75,7 @@ BlendTree:
   - serializedVersion: 2
     m_Motion: {fileID: 3094330708855449807, guid: a82fb70254a844243a7fe7e02b1ff809, type: 3}
     m_Threshold: 0.72727275
-    m_Position: {x: 0.8, y: 0.8}
+    m_Position: {x: 0.35, y: 0.35}
     m_TimeScale: 1
     m_CycleOffset: 0
     m_DirectBlendParameter: Speed
@@ -163,7 +163,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: -9092678114726828183}
   m_Tag: 
-  m_SpeedParameter: 
+  m_SpeedParameter: Speed
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
@@ -753,7 +753,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Gun Idle
-  m_Speed: 1
+  m_Speed: 0
   m_CycleOffset: 0
   m_Transitions: []
   m_StateMachineBehaviours: []
@@ -779,7 +779,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Walk Turn 180
-  m_Speed: 1.25
+  m_Speed: 1.5
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 4082648781637678486}

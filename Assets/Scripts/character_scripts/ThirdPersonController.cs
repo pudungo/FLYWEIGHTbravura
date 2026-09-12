@@ -180,50 +180,43 @@ public class ThirdPersonController : MonoBehaviour
         float vertical = move.y;     // W/S
         float horizontal = move.x;   // A/D
 
-        // ROTATION (Tank)
-
-        if (!isAiming)
-        {
-            // tank rotation (movement)
-            float currentTurnSpeed = isAiming ? aimTurnSpeed : turnSpeed;
-            transform.Rotate(0f, horizontal * currentTurnSpeed * Time.fixedDeltaTime, 0f);
-        }
-
-
-        // RUNNING
-        // Determine if moving forward or backward
         bool movingForward = vertical > 0f;
         bool movingBackward = vertical < 0f;
 
-        // Disable running when moving backward
         float baseSpeed = movementSpeed;
 
         if (movingBackward)
         {
-            baseSpeed *= backwardSpeedMultiplier;   // slower backwards
-            isRunning = false;                      // force no running
+            baseSpeed *= backwardSpeedMultiplier;
+            isRunning = false;
         }
 
-        // Running only allowed when moving forward
         if (movingForward && isRunning)
-        {
-            baseSpeed *= runningSpeedMultiplier; // running multiplier
-        }
+            baseSpeed *= runningSpeedMultiplier;
 
-        float targetSpeed = baseSpeed * Mathf.Abs(vertical);
+        bool runStrafe = !isAiming && isRunning && movingForward;
+
+        if (!isAiming && !runStrafe)
+            transform.Rotate(0f, horizontal * turnSpeed * Time.fixedDeltaTime, 0f);
+
+        float targetSpeed = runStrafe ? baseSpeed : baseSpeed * Mathf.Abs(vertical);
         currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.fixedDeltaTime * 8f);
 
+//Runstrafe if character runs left or right = no tank control
 
-        // MOVEMENT (Forward/back)
         if (!isAiming)
         {
-            Vector3 forward = transform.forward;
-            Vector3 velocity = forward * vertical * currentSpeed;
+            Vector3 moveDir;
+            if (runStrafe)
+                moveDir = (transform.forward * vertical + transform.right * horizontal).normalized;
+            else
+                moveDir = transform.forward * vertical;
+
+            Vector3 velocity = moveDir * currentSpeed;
             body.linearVelocity = new Vector3(velocity.x, body.linearVelocity.y, velocity.z);
         }
         else
         {
-            // Stop movement while aiming
             body.linearVelocity = new Vector3(0, body.linearVelocity.y, 0);
         }
 
@@ -262,11 +255,19 @@ public class ThirdPersonController : MonoBehaviour
             aimTurnX = 0f;
             aimTurnXVelocity = 0f;
 
-            Vector2 input = new Vector2(horizontal, vertical);
-            Vector2 normalized = Vector2.ClampMagnitude(input, 1f);
-            float directionScale = (isRunning && vertical > 0f) ? 1f : 0.5f;
-            animX = normalized.x * directionScale;
-            animY = normalized.y * directionScale;
+            Vector2 n = Vector2.ClampMagnitude(new Vector2(horizontal, vertical), 1f);
+            if (isRunning && movingForward)
+            {
+                float maxComp = Mathf.Max(Mathf.Abs(n.x), Mathf.Abs(n.y), 0.0001f);
+                n /= maxComp;
+            }
+            else
+            {
+                n *= 0.5f;
+            }
+
+            animX = n.x;
+            animY = n.y;
         }
 
         if (isAiming)
